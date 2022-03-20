@@ -31,7 +31,12 @@ real_j = 2  # ожидаемая координата икса
 prediction = (0, 0)  # предсказание в какой мы точке
 false_count = 0  # количество несовпадения перемещений
 
-p_map = np.zeros((5, 5), int)
+flag = True
+root = tk.Tk()
+root.wm_geometry("+%d+%d" % ((root.winfo_screenwidth() - root.winfo_reqwidth()) / 2, (root.winfo_screenheight() - root.winfo_reqheight()) / 2))
+canvas = tk.Canvas()
+
+p_map = np.zeros((10, 10), int)
 p_map[2][2] = 1
 
 ROOM_LENGTH = len(p_map)
@@ -112,39 +117,44 @@ def create_color_map():
     return c_map
 
 
-def close():
-    root.destroy()
+def change_flag():
+    flag = False
+    #return 0
 
 
-def create_graphic_map():
+def create_graphic_map(canvas_f):
 
     CELL_SIZE = 50
 
+    canvas_f = tk.Canvas(root, width=CELL_SIZE * ROOM_LENGTH, height=CELL_SIZE * ROOM_WIDTH)
 
-    canvas = tk.Canvas(root, width=CELL_SIZE * ROOM_LENGTH, height=CELL_SIZE * ROOM_WIDTH)
+    if flag:
+        for i in range(ROOM_LENGTH):
+            for j in range(ROOM_WIDTH):
+                x1, y1 = j * CELL_SIZE, i * CELL_SIZE
+                x2, y2 = j * CELL_SIZE + CELL_SIZE, i * CELL_SIZE + CELL_SIZE
+                canvas_f.create_rectangle((x1, y1), (x2, y2), fill=color_map[i][j])
+                if real_i == i and real_j == j:
+                    canvas_f.create_oval((x1 + 10, y1 + 10), (x2 - 10, y2 - 10), fill='black')
+        #b = tk.Button(root, text='Create new window and close current', command=root.after(1000, root.destroy()))
+        #frm = ttk.Frame(root, padding=10)
+        #rm.grid()
+        #ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
+        #ttk.Button(root, text="Quit", command=root.destroy).grid(column=1, row=0)
+        canvas_f.pack()
+        # move_button = tk.Button(root, text='MOVE', command=root.update_idletasks)
+        # exit_button = tk.Button(root, text='CLOSE WINDOW', command=change_flag)
+        # move_button.pack()
+        # exit_button.pack()
+        # root.wm_geometry("+%d+%d" % ((root.winfo_screenwidth() - root.winfo_reqwidth()) / 2, (root.winfo_screenheight() - root.winfo_reqheight()) / 2))
+        #root.after(1000, root.destroy)
+        change_flag()
+        root.update_idletasks()
+        root.update()
+        time.sleep(1)
+        canvas_f.destroy()
+        # root.destroy()
 
-    cell_colors = ['#2cebe9', '#300a7e']
-    ci = 0  # color index
-
-    for i in range(ROOM_LENGTH):
-        for j in range(ROOM_WIDTH):
-            x1, y1 = j * CELL_SIZE, i * CELL_SIZE
-            x2, y2 = j * CELL_SIZE + CELL_SIZE, i * CELL_SIZE + CELL_SIZE
-            canvas.create_rectangle((x1, y1), (x2, y2), fill=color_map[i][j])
-            if real_i == i and real_j == j:                          
-                canvas.create_oval((x1 + 10, y1 + 10), (x2 - 10, y2 - 10), fill='black')
-    #b = tk.Button(root, text='Create new window and close current', command=root.after(1000, root.destroy()))
-    #frm = ttk.Frame(root, padding=10)
-    #rm.grid()
-    #ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
-    #ttk.Button(root, text="Quit", command=root.destroy).grid(column=1, row=0)
-    canvas.pack()
-    button = tk.Button(root, text='MOVE', command=close)
-    button.pack()
-    root.wm_geometry("+%d+%d" % ((root.winfo_screenwidth() - root.winfo_reqwidth()) / 2, (root.winfo_screenheight() - root.winfo_reqheight()) / 2))
-    root.mainloop()
-    #root.after(1000, root.destroy())
-    # time.sleep()
 
 # //////////////////////////////////
 # START
@@ -185,8 +195,11 @@ for k in range(10):
 
     if real_i != prediction[0] or real_j != prediction[1]:
         false_count += 1
-    root = tk.Tk()
-    create_graphic_map()  
+    # root = tk.Tk()
+    # if flag:
+    create_graphic_map(canvas)
+    # else:
+    #     root.update()
 
 get_false_count()
 # root = tk.Tk()
