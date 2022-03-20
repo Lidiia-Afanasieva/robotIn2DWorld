@@ -1,23 +1,28 @@
-import tkinter as tk
-
-# --- functions ---
+from tkinter import Tk, Label, Button
 
 
-def second_window():
-    window.destroy()
+class QBox:
+    """ Class that is an object"""
 
-    second = tk.Tk()
+    def __init__(self, master):
+        """ Class init Method"""
+        self.master = master
+        master.title("Question Box")
+        self.label = Label(master, text="Welcome to the Question Box")
+        self.button = Button(master, command=self.change, text="Clickme", fg='Black')
 
-    button = tk.Button(second, text='CLOSE SECOND', command=second.destroy)
-    button.pack()
+        self.label.pack()
+        self.button.pack()
 
-    second.mainloop()
+    def change(self):
+        self.label.pack_forget()
 
-# --- main ---
 
-window = tk.Tk()
+def main():
+    root = Tk()
+    QBox(root)
+    root.mainloop()
 
-button = tk.Button(window, text='CLOSE FIRST', command=second_window)
-button.pack()
 
-window.mainloop()
+if __name__ == '__main__':
+    main()
