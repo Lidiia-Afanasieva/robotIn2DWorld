@@ -13,6 +13,7 @@ from tkinter import ttk
 
 import numpy as np
 import tkinter as tk
+from tkinter import *
 import time
 import copy
 
@@ -33,11 +34,11 @@ false_count = 0  # количество несовпадения перемещ�
 
 flag = True
 root = tk.Tk()
-root.wm_geometry("+%d+%d" % ((root.winfo_screenwidth() - root.winfo_reqwidth()) / 2, (root.winfo_screenheight() - root.winfo_reqheight()) / 2))
+root.wm_geometry("+0+0")
 canvas = tk.Canvas()
 
-p_map = np.zeros((10, 10), int)
-p_map[2][2] = 1
+p_map = np.zeros((5, 4), int)
+p_map[real_i][real_j] = 1
 
 ROOM_LENGTH = len(p_map)
 ROOM_WIDTH = len(p_map[0])
@@ -48,14 +49,14 @@ def find_max_element(arr: list) -> tuple:  # вернёт индексы мак�
     return max(gen, key=lambda x: arr[x[0]][x[1]])
 
 
-def sense_in_2d(p_map: list, real_color: str) -> list:
+def sense_in_2d(p_map: list, real_color: str, additional_color: str) -> list:
     p_new = []
 
     for i in range(ROOM_LENGTH):
 
         for j in range(ROOM_WIDTH):
 
-            if real_color == color_map[i][j]:
+            if real_color == color_map[i][j] and additional_color == color_map[i][(j + 1) % len(p_map[0])]:
                 # совпадение цвета - вероятность увеличится
                 p_new.append(P_HIT * p_map[i][j])
 
@@ -74,10 +75,10 @@ def move_in_2d(p_map: list, step: int) -> list:
     for i in range(ROOM_LENGTH):
 
         for j in range(ROOM_WIDTH):
-            current_probability = p_map[(i + step) % ROOM_LENGTH][j] * P_FORWARD
+            current_probability = p_map[i][(j + step) % ROOM_WIDTH] * P_FORWARD
             current_probability += p_map[i][j] * P_STAY
-            current_probability += p_map[(i + step) % ROOM_WIDTH][(j - step) % ROOM_WIDTH] * P_LEFT
-            current_probability += p_map[(i + step) % ROOM_WIDTH][(j + step) % ROOM_WIDTH] * P_RIGHT
+            current_probability += p_map[(i - step) % ROOM_LENGTH][(j + step) % ROOM_WIDTH] * P_LEFT
+            current_probability += p_map[(i + step) % ROOM_LENGTH][(j + step) % ROOM_WIDTH] * P_RIGHT
 
             p_new.append(current_probability)
 
@@ -122,26 +123,55 @@ def change_flag():
     #return 0
 
 
+# def user_settings():
+#
+#     # CELL_SIZE = 50
+#     #
+#     # canvas_f = tk.Canvas(root, width=CELL_SIZE * ROOM_LENGTH, height=CELL_SIZE * ROOM_WIDTH)
+#     # # labels_fuck = tk.Label(text='Write settings', font="Arial 24", width=10, height=2)
+#     # root.title('Write settings')
+#     #
+#     # length = StringVar()
+#     # message_entry = Entry(background='enter the length', textvariable=length)
+#     # message_entry.place(relx=1, rely=2, anchor="c")
+#     # #print(length.get())
+#     # second_en = Entry(background='enter the length')
+#     # message_entry.pack()
+#     #
+#     # # labels_fuck.pack()
+#
+#     tk.Label(root, text="ROOM_LENGTH").grid(row=0)
+#     tk.Label(root, text="ROOM_WEIGHT").grid(row=1)
+#
+#     length = tk.Entry(root)
+#     weight = tk.Entry(root)
+#
+#     length.grid(row=0, column=1)
+#     weight.grid(row=1, column=1)
+#
+#
+# user_settings()
+# def start_simulating():
+
+
 def create_graphic_map(canvas_f):
 
     CELL_SIZE = 50
 
-    canvas_f = tk.Canvas(root, width=CELL_SIZE * ROOM_LENGTH, height=CELL_SIZE * ROOM_WIDTH)
+    canvas = tk.Canvas(root, width=CELL_SIZE * ROOM_LENGTH, height=CELL_SIZE * ROOM_WIDTH)#.grid(row=2)
 
     if flag:
         for i in range(ROOM_LENGTH):
             for j in range(ROOM_WIDTH):
-                x1, y1 = j * CELL_SIZE, i * CELL_SIZE
-                x2, y2 = j * CELL_SIZE + CELL_SIZE, i * CELL_SIZE + CELL_SIZE
-                canvas_f.create_rectangle((x1, y1), (x2, y2), fill=color_map[i][j])
+                x1, y1 = i * CELL_SIZE, j * CELL_SIZE
+                x2, y2 = i * CELL_SIZE + CELL_SIZE, j * CELL_SIZE + CELL_SIZE
+                canvas.create_rectangle((x1, y1), (x2, y2), fill=color_map[i][j])
+                if prediction[0] == i and prediction[1] == j:
+                    canvas.create_oval((x1 + 10, y1 + 10), (x2 - 10, y2 - 10), fill='black')
                 if real_i == i and real_j == j:
-                    canvas_f.create_oval((x1 + 10, y1 + 10), (x2 - 10, y2 - 10), fill='black')
-        #b = tk.Button(root, text='Create new window and close current', command=root.after(1000, root.destroy()))
-        #frm = ttk.Frame(root, padding=10)
-        #rm.grid()
-        #ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
-        #ttk.Button(root, text="Quit", command=root.destroy).grid(column=1, row=0)
-        canvas_f.pack()
+                    canvas.create_oval((x1 + 15, y1 + 15), (x2 - 15, y2 - 15), fill='red')
+
+        canvas.pack()
         # move_button = tk.Button(root, text='MOVE', command=root.update_idletasks)
         # exit_button = tk.Button(root, text='CLOSE WINDOW', command=change_flag)
         # move_button.pack()
@@ -151,8 +181,8 @@ def create_graphic_map(canvas_f):
         change_flag()
         root.update_idletasks()
         root.update()
-        time.sleep(1)
-        canvas_f.destroy()
+        time.sleep(0.5)
+        canvas.destroy()
         # root.destroy()
 
 
@@ -169,12 +199,13 @@ print(p_map)
 print(color_map)
 print(f'start element is: {color_map[real_i][real_j]}')
 
-for k in range(10):
+for k in range(20):
 
     print('//////////////////////')
 
-    # first part of algorythm 
-    p_map = sense_in_2d(p_map, color_map[real_i][real_j])
+    # first part of algorythm
+    p_map = sense_in_2d(p_map, color_map[real_i][real_j], color_map[real_i][(real_j + 1) % len(p_map[0])])
+    print(f'real is: {color_map[real_i][real_j]} \n neibor is: {color_map[real_i][(real_j + 1) % len(p_map[0])]}')
     prediction = find_max_element(p_map)
 
     print('sense: \n', end='')
@@ -184,9 +215,9 @@ for k in range(10):
     if real_i != prediction[0] or real_j != prediction[1]:
         false_count += 1
 
-    # second part of algorythm 
+    # second part of algorythm
     p_map = move_in_2d(p_map, 1)
-    real_i = (real_i - 1) % len(p_map)
+    real_j = (real_j - 1) % len(p_map[0])
     prediction = find_max_element(p_map)
 
     print('move:  \n', end='')
