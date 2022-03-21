@@ -1,5 +1,4 @@
 import random
-
 import numpy as np
 import tkinter as tk
 import tkinter.font as tk_font
@@ -64,11 +63,11 @@ def sense_in_2d(p_map: list, real_color: str, real_i, real_j) -> list:
                         color_map[real_i][(real_j + 1) % len(p_map[0])] == color_map[i][(j + 1) % len(p_map[0])]:
 
                     # совпадение цвета - вероятность увеличится
-                    p_new.append(P_HIT ** 2 * p_map[i][j])
+                    p_new.append((P_HIT ** 2) * p_map[i][j])
 
                 else:
                     # несовпадение цвета - вероятность уменьшится
-                    p_new.append(P_MISS ** 2 * p_map[i][j])
+                    p_new.append((P_MISS ** 2) * p_map[i][j])
 
             elif sensor_count == 3:
 
@@ -77,11 +76,11 @@ def sense_in_2d(p_map: list, real_color: str, real_i, real_j) -> list:
                         color_map[real_i][(real_j - 1) % len(p_map[0])] == color_map[i][(j - 1) % len(p_map[0])]:
 
                     # совпадение цвета - вероятность увеличится
-                    p_new.append(P_HIT ** 3 * p_map[i][j])
+                    p_new.append((P_HIT ** 3) * p_map[i][j])
 
                 else:
                     # несовпадение цвета - вероятность уменьшится
-                    p_new.append(P_MISS ** 3 * p_map[i][j])
+                    p_new.append((P_MISS ** 3) * p_map[i][j])
 
             elif sensor_count == 4:
 
@@ -91,11 +90,11 @@ def sense_in_2d(p_map: list, real_color: str, real_i, real_j) -> list:
                         color_map[(real_i + 1) % len(p_map[0])][real_j] == color_map[(i + 1) % len(p_map[0])][j]:
 
                     # совпадение цвета - вероятность увеличится
-                    p_new.append(P_HIT ** 4 * p_map[i][j])
+                    p_new.append((P_HIT ** 4) * p_map[i][j])
 
                 else:
                     # несовпадение цвета - вероятность уменьшится
-                    p_new.append(P_MISS ** 4 * p_map[i][j])
+                    p_new.append((P_MISS ** 4) * p_map[i][j])
 
             elif sensor_count == 5:
 
@@ -106,11 +105,11 @@ def sense_in_2d(p_map: list, real_color: str, real_i, real_j) -> list:
                         color_map[(real_i - 1) % len(p_map[0])][real_j] == color_map[(i - 1) % len(p_map[0])][j]:
 
                     # совпадение цвета - вероятность увеличится
-                    p_new.append(P_HIT ** 5 * p_map[i][j])
+                    p_new.append((P_HIT ** 5) * p_map[i][j])
 
                 else:
                     # несовпадение цвета - вероятность уменьшится
-                    p_new.append(P_MISS ** 5 * p_map[i][j])
+                    p_new.append((P_MISS ** 5) * p_map[i][j])
 
     summ_p = sum(p_new)
     p_new = [x / summ_p for x in p_new]
@@ -278,7 +277,6 @@ def start_simulating():
 
         # first part of algorythm
         p_map = sense_in_2d(p_map, color_map[real_i][real_j], real_i, real_j)
-        print(f'real is: {color_map[real_i][real_j]} \nneighbor is: {color_map[real_i][(real_j + 1) % len(p_map[0])]}')
         print('sensor_count :', sensor_count)
         print('color_count :', color_count)
         prediction = find_max_element(p_map)
@@ -304,6 +302,8 @@ def start_simulating():
 
         create_graphic_map(k)
 
+    root.destroy()
+
 # //////////////////////////////////
 # START
 # //////////////////////////////////
@@ -320,7 +320,6 @@ user_settings()
 p_map = np.zeros((ROOM_LENGTH, ROOM_WIDTH))
 p_map[real_i][real_j] = 1
 
-print(auto_flag)
 color_map = create_color_map()
 
 root = tk.Tk()
