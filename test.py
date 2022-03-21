@@ -1,28 +1,13 @@
-from tkinter import Tk, Label, Button
+import tkinter as tk
 
+master = tk.Tk()
+tk.Label(master, text="First Name").grid(row=0)
+tk.Label(master, text="Last Name").grid(row=1)
 
-class QBox:
-    """ Class that is an object"""
+e1 = tk.Entry(master)
+e2 = tk.Entry(master)
 
-    def __init__(self, master):
-        """ Class init Method"""
-        self.master = master
-        master.title("Question Box")
-        self.label = Label(master, text="Welcome to the Question Box")
-        self.button = Button(master, command=self.change, text="Clickme", fg='Black')
+e1.grid(row=0, column=1)
+e2.grid(row=1, column=1)
 
-        self.label.pack()
-        self.button.pack()
-
-    def change(self):
-        self.label.pack_forget()
-
-
-def main():
-    root = Tk()
-    QBox(root)
-    root.mainloop()
-
-
-if __name__ == '__main__':
-    main()
+master.mainloop()
