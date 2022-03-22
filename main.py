@@ -5,7 +5,10 @@ import tkinter.font as tk_font
 import time
 
 
-# Temps initialisation
+# //////////////////////////////////
+# INITIALISATION PART
+# //////////////////////////////////
+
 
 P_HIT = 0.8  # вероятность что датчик прав
 P_MISS = 0.2  # вероятность что датчик ошибся
@@ -35,9 +38,24 @@ color_count = 0
 step_count = 10
 
 
+# //////////////////////////////////
+# SUPPORTING PART
+# //////////////////////////////////
+
+
 def find_max_element(arr: list) -> tuple:  # вернёт индексы максимального числа
     gen = ((i, j) for i in range(ROOM_LENGTH) for j in range(ROOM_WIDTH))
     return max(gen, key=lambda x: arr[x[0]][x[1]])
+
+
+def get_false_count():
+    print(f'false_count = {false_count}')
+    return None
+
+
+# //////////////////////////////////
+# MAP PART
+# //////////////////////////////////
 
 
 def sense_in_2d(p_map: list, real_color: str, real_i, real_j) -> list:
@@ -133,9 +151,9 @@ def move_in_2d(p_map: list, step: int) -> list:
     return np.array(p_new).reshape((ROOM_LENGTH, ROOM_WIDTH))
 
 
-def get_false_count():
-    print(f'false_count = {false_count}')
-    return None
+# //////////////////////////////////
+# COLOR PART
+# //////////////////////////////////
 
 
 def color_count_find():
@@ -165,6 +183,11 @@ def create_color_map():
     print(f'color count is {color_count}')
 
     return c_map
+
+
+# //////////////////////////////////
+# GRAPHIC PART
+# //////////////////////////////////
 
 
 def pause():
@@ -255,6 +278,11 @@ def user_settings():
     tk.Button(root, text='AUTONOMOUS MODE', command=autonomous_flag, font=my_font, bg='#749BA9').grid(row=6, column=1)
 
     root.mainloop()
+
+
+# //////////////////////////////////
+# MAIN PART
+# //////////////////////////////////
 
 
 def start_simulating():
